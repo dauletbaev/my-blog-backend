@@ -16,15 +16,17 @@ export class MailService {
 
   async sendUserConfirmation(user: User, token: string) {
     const clientUrl = this.configService.get<string>('client.url');
+    const currentUrl = this.configService.get<string>('client.thisURL');
     const queryParams = new URLSearchParams({
       redirect: `${clientUrl}/auth/confirm?token=${token}`,
     });
-    const url = `http://localhost:3000/auth/confirm/${token}?${queryParams.toString()}`;
+
+    const url = `${currentUrl}/auth/confirm/${token}?${queryParams.toString()}`;
 
     await this.mailerService.sendMail({
       to: user.email,
       // from: '"Support Team" <support@example.com>', // override default from
-      subject: 'Welcome to Nice App! Confirm your Email',
+      subject: 'Welcome to my site! Confirm your Email',
       template: './confirmation', // `.hbs` extension is appended automatically
       context: {
         name: user.fullName,
