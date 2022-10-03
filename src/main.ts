@@ -17,7 +17,10 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
-  app.enableCors();
+  app.enableCors({
+    origin: ['https://abat.me', 'https://dashboard.abat.me'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  });
 
   await app.register(multipart);
   await app.register(compression, { encodings: ['gzip', 'deflate'] });
