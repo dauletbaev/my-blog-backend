@@ -18,10 +18,19 @@ import { FileService } from './file.service';
 export class FileController {
   constructor(private readonly fileService: FileService) {}
 
+  @Post('image')
+  @UseGuards(JwtAuthGuard, FileGuard)
+  @HttpCode(HttpStatus.OK)
+  async uploadImage(@File() file: Storage.MultipartFile) {
+    const result = await this.fileService.uploadImage(file);
+
+    return result;
+  }
+
   @Post('avatar')
   @UseGuards(JwtAuthGuard, FileGuard)
   @HttpCode(HttpStatus.OK)
-  async uploadImage(@User() user: any, @File() file: Storage.MultipartFile) {
+  async uploadAvatar(@User() user: any, @File() file: Storage.MultipartFile) {
     const result = await this.fileService.uploadImage(file);
 
     if (result.ok) {
