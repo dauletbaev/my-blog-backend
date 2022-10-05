@@ -44,8 +44,6 @@ export class PostsService {
         },
       });
 
-      await this.revalidatePost(data.slug);
-
       return data;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -284,6 +282,13 @@ export class PostsService {
         data: { published: true && !unpublish },
         where: { AND: { id, authorId: user.id } },
       });
+
+      const post = await this.prisma.post.findUnique({
+        where: { id },
+        select: { slug: true },
+      });
+
+      await this.revalidatePost(post.slug);
 
       return { ok: true };
     } catch (error) {
