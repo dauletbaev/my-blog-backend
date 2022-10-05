@@ -44,6 +44,8 @@ export class PostsService {
         },
       });
 
+      await this.revalidatePost(data.slug);
+
       return data;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -350,8 +352,6 @@ export class PostsService {
 
     try {
       await lastValueFrom(this.httpService.get(url));
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   }
 }
