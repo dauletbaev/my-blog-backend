@@ -5,6 +5,7 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  IsJSON,
   validateSync,
 } from 'class-validator';
 
@@ -21,6 +22,9 @@ class EnvironmentVariables {
 
   @IsNumber()
   PORT: number;
+
+  @IsJSON({ message: 'CORS_ORIGIN should be JSON array' })
+  CORS_ORIGIN: string;
 
   @IsString()
   @IsNotEmpty()
