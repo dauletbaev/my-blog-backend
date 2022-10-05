@@ -17,17 +17,17 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
-  app.enableCors({
-    origin: ['https://abat.me', 'https://dashboard.abat.me'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  });
-
   await app.register(multipart);
   await app.register(compression, { encodings: ['gzip', 'deflate'] });
   await app.register(helmet);
 
   const prismaService = app.get(PrismaService);
   const configService = app.get(ConfigService);
+
+  app.enableCors({
+    origin: JSON.parse(configService.get<string>('CORS_ORIGIN')),
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  });
 
   await prismaService.enableShutdownHooks(app);
   const port = configService.get<number | undefined>('PORT') ?? 3000;
