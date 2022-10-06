@@ -45,6 +45,7 @@ export class PostsController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard)
   @Roles('admin')
   async findAll(
     @Query('limit') limit?: string,
@@ -59,6 +60,13 @@ export class PostsController {
       skip: parseInt(offset ?? '0', 10),
       orderBy: orderBy ? { [orderBy]: order } : {},
     });
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles('admin')
+  async remove(@Param('id') id: string) {
+    return this.postsService.removeAdmin(+id);
   }
 
   @Get('my')
@@ -108,7 +116,7 @@ export class PostsController {
 
   @Delete('my/:id')
   @UseGuards(JwtAuthGuard)
-  async remove(@Param('id') id: string, @User() user: UserEntity) {
+  async removeMy(@Param('id') id: string, @User() user: UserEntity) {
     return this.postsService.remove(+id, user);
   }
 
