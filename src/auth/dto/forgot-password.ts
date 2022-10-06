@@ -4,4 +4,8 @@ export class ForgotPasswordDto {
   @IsString()
   @IsNotEmpty()
   email: string;
+
+  @IsString()
+  @IsNotEmpty()
+  token: string;
 }

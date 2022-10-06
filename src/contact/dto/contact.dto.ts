@@ -11,5 +11,9 @@ export class ContactDto {
 
   @IsString()
   @IsNotEmpty()
+  token: string;
+
+  @IsString()
+  @IsNotEmpty()
   message: string;
 }

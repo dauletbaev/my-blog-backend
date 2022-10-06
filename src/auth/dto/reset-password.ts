@@ -12,4 +12,8 @@ export class ResetPasswordDto {
   @IsString()
   @IsNotEmpty()
   passwordConfirmation: string;
+
+  @IsString()
+  @IsNotEmpty()
+  reCaptchatoken: string;
 }

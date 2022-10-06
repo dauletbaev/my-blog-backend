@@ -12,6 +12,7 @@ import { MailModule } from './mail/mail.module';
 import { ContactModule } from './contact/contact.module';
 import { FileModule } from './file/file.module';
 import { AnalyticsModule } from './analytics/analytics.module';
+import { CaptchaModule } from './captcha/captcha.module';
 import mailConfig from './config/mail.config';
 import clientConfig from './config/client.config';
 import awsConfig from './config/aws.config';
@@ -30,6 +31,7 @@ import awsConfig from './config/aws.config';
     MailModule,
     FileModule,
     AnalyticsModule,
+    CaptchaModule,
   ],
   controllers: [AppController],
   providers: [

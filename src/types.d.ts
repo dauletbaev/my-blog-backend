@@ -17,6 +17,8 @@ declare global {
       MAIL_PASSWORD: string;
       MAIL_FROM: string;
 
+      RECAPTCHA_SERVER_KEY: string;
+
       AWS_S3_BUCKET: string;
       AWS_S3_REGION: string;
       AWS_ACCESS_KEY_ID: string;
