@@ -30,4 +30,8 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   confirmPassword: string;
+
+  @IsString()
+  @IsNotEmpty()
+  token: string;
 }

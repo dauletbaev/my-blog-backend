@@ -7,6 +7,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { PrismaService } from '~/services/prisma.service';
 import { UsersService } from '~/users/users.service';
 import { MailModule } from '~/mail/mail.module';
+import { CaptchaModule } from '~/captcha/captcha.module';
 import { BcryptService } from '~/services/bcrypt.service';
 
 @Module({
@@ -16,6 +17,7 @@ import { BcryptService } from '~/services/bcrypt.service';
       secret: jwtConstants().secret,
       signOptions: { expiresIn: jwtConstants().expiresIn },
     }),
+    CaptchaModule,
   ],
   providers: [
     AuthService,

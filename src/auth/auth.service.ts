@@ -6,9 +6,11 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { UsersService } from '~/users/users.service';
 import { MailService } from '~/mail/mail.service';
+import { CaptchaService } from '~/captcha/captcha.service';
 import { BcryptService } from '~/services/bcrypt.service';
 import { BadRequestException, NotFoundException } from '~/exceptions';
 import { ResetPasswordDto } from './dto/reset-password';
+import { ForgotPasswordDto } from './dto/forgot-password';
 
 @Injectable()
 export class AuthService {
@@ -18,6 +20,7 @@ export class AuthService {
     private readonly userService: UsersService,
     private readonly mailService: MailService,
     private readonly bcrypt: BcryptService,
+    private readonly captchaService: CaptchaService,
   ) {}
 
   async validateUser(username: string, password: string) {
@@ -35,6 +38,8 @@ export class AuthService {
   }
 
   async login(loginDto: LoginDto) {
+    await this.captchaService.verify(loginDto.token);
+
     const result = await this.validateUser(
       loginDto.username,
       loginDto.password,
@@ -71,6 +76,8 @@ export class AuthService {
   }
 
   async register(registerDto: RegisterDto) {
+    await this.captchaService.verify(registerDto.token);
+
     const { email, firstName, lastName, username, password, confirmPassword } =
       registerDto;
 
@@ -160,9 +167,13 @@ export class AuthService {
     return user;
   }
 
-  async forgotPassword(email: string) {
+  async forgotPassword({ email, token }: ForgotPasswordDto) {
+    await this.captchaService.verify(token);
+
     try {
-      const user = await this.prisma.user.findUnique({ where: { email } });
+      const user = await this.prisma.user.findUnique({
+        where: { email },
+      });
 
       if (!user) {
         throw new NotFoundException('User not found');
@@ -189,6 +200,8 @@ export class AuthService {
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const { token, password, passwordConfirmation } = resetPasswordDto;
+
+    await this.captchaService.verify(resetPasswordDto.reCaptchatoken);
 
     if (password !== passwordConfirmation) {
       throw new BadRequestException('Password is not confirmed');
