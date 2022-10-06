@@ -188,6 +188,29 @@ export class PostsService {
     }
   }
 
+  async removeAdmin(id: number) {
+    try {
+      const post = await this.prisma.post.findUnique({
+        where: { id },
+      });
+
+      if (!post) {
+        throw new NotFoundException('Post not found');
+      }
+
+      await this.prisma.post.delete({ where: { id } });
+
+      await this.revalidatePost(post.slug);
+
+      return { ok: true };
+    } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
+      throw new BadRequestException("Can't delete post");
+    }
+  }
+
   async remove(id: number | string, user: UserEntity) {
     const selectBy = typeof id === 'number' ? 'id' : 'slug';
     try {
