@@ -1,6 +1,7 @@
 import { APP_GUARD } from '@nestjs/core';
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { validate } from './validation/env.validation';
@@ -24,6 +25,20 @@ import awsConfig from './config/aws.config';
       cache: false,
       validate,
     }),
+    ThrottlerModule.forRootAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        ttl: parseInt(
+          config.get<string | undefined>('THROTTLE_TTL') || '60',
+          10,
+        ),
+        limit: parseInt(
+          config.get<string | undefined>('THROTTLE_LIMIT') || '20',
+          10,
+        ),
+      }),
+    }),
     AuthModule,
     ContactModule,
     UsersModule,
@@ -39,6 +54,10 @@ import awsConfig from './config/aws.config';
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
