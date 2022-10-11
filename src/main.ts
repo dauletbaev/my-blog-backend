@@ -17,6 +17,20 @@ async function bootstrap() {
     new FastifyAdapter(),
   );
 
+  const fastify = app.getHttpAdapter().getInstance();
+  // eslint-disable-next-line
+  // @ts-ignore
+  const badNames = Object.getOwnPropertyNames({}.__proto__);
+  fastify.addHook('onRequest', async (req, reply) => {
+    const contentType = req.headers['content-type'];
+    for (const badName of badNames) {
+      if (contentType && contentType.indexOf(badName) > -1) {
+        reply.code(415);
+        return reply.send({ ok: false, message: 'Content type not supported' });
+      }
+    }
+  });
+
   await app.register(multipart);
   await app.register(compression, { encodings: ['gzip', 'deflate'] });
   await app.register(helmet);
